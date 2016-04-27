@@ -3,6 +3,7 @@ package server;
 import java.io.*;
 import java.net.*;
 
+import client.BufferControlClient;
 import dataPacket.DataPacket;
 import dataPacket.Serializer;
 

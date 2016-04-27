@@ -13,8 +13,9 @@ import dataPacket.Serializer;
 
 public class BufferControlClient {
 	public ArrayList<byte[]> packetList = new ArrayList<byte[]>();
-	public final int packetSize = 200;
+	public final int packetSize = 10;
 	final int windowFrameSize = 5;
+	public int packetsToSend = 1;
 	int seq = 0;
 	InetAddress IP;
 
@@ -41,16 +42,17 @@ public class BufferControlClient {
 		byte[] data = s.getBytes();
 		   //split sequence into byte blocks
 	       int packetSplits = data.length/packetSize;
+	       packetsToSend += packetSplits;
 	       //if(packetSplits>0){
 	    	   for (int i = 0; i < packetSplits+1; i++) {
 	    		   byte[] dataSeg = Arrays.copyOfRange(data, i*packetSize, i*packetSize+packetSize);
-	    		   DataPacket packet = new DataPacket(dataSeg, packetList.size()+1);
+	    		   DataPacket packet = new DataPacket(dataSeg, packetList.size());
 	    		   addPacket(packet);
 	    	   }
 	    	   
-	       //}
+	       }
 		
-	}
+	//}
 	
 	
 	
@@ -58,12 +60,13 @@ public class BufferControlClient {
 		DatagramPacket sendPacket = new DatagramPacket(packetList.get(seq), packetList.get(seq).length, IP, 9876);
 		try {
 			sock.send(sendPacket);
+			//System.out.println("CHECKPOINT");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}finally{
 			seq++;
 		}
-		System.out.println("CHECKPOINT");
+		
 	}
 	
 	private void addPacket(DataPacket packet){
